@@ -14,11 +14,12 @@ import pandas as pd
 
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
-driver.implicitly_wait(10)
+driver.implicitly_wait(5)
 centers = []
 locations =[]
 emails =[]
 programs =  []
+phones = []
 # Test name: Untitled
 # Step # | name | target | value
 # 1 | open | https://maps.gov.bc.ca/ess/hm/ccf/ | 
@@ -51,12 +52,26 @@ while int(driver.find_element(By.CSS_SELECTOR, ".page-length").text) < int(drive
   driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 i = 1
+driver.implicitly_wait(0)
 while len(driver.find_elements(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name")) > 0:
   print(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name").text)
   centers.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name").text)
-  emails.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .col-6 > div").text)
+
+  if len(driver.find_elements(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-email")) > 0:
+    print('size of emails ',len(driver.find_elements(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-email")))
+    emails.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-email").text)
+  else:
+    emails.append("")
+  if len(driver.find_elements(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-phone-number")) > 0:
+    phones.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-phone-number").text)
+  else:
+    phones.append('')
+  # emails.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-email").text)
+  
   programs.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-description").text)
   locations.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-address").text)
+  # phones.append( (driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-phone-number").text))
+    
   i +=1 
   
 
