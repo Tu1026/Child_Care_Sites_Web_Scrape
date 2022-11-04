@@ -29,20 +29,41 @@ driver.find_element(By.CSS_SELECTOR, "fieldset:nth-child(1) .col-12:nth-child(3)
 driver.find_element(By.CSS_SELECTOR, "fieldset:nth-child(3) .col-12:nth-child(1) .custom-control-label").click()
 # 4 | click | css=fieldset:nth-child(3) .col-12:nth-child(2) .custom-control-label | 
 driver.find_element(By.CSS_SELECTOR, "fieldset:nth-child(3) .col-12:nth-child(2) .custom-control-label").click()
-while driver.find_element(By.CSS_SELECTOR, ".page-length").text <= driver.find_element(By.CSS_SELECTOR, ".record-count").text:
+WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR,".page-length")))
+WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".record-count")))
+curr = (driver.find_element(By.CSS_SELECTOR, ".page-length").text)
+max_page =  (driver.find_element(By.CSS_SELECTOR, ".record-count").text)
+
+while not curr or not max_page:
+  curr = driver.find_element(By.CSS_SELECTOR, ".page-length").text
+  max_page =  driver.find_element(By.CSS_SELECTOR, ".record-count").text
+    
+print('curr ',curr)
+print('max ', max_page)
+while int(driver.find_element(By.CSS_SELECTOR, ".page-length").text) < int(driver.find_element(By.CSS_SELECTOR, ".record-count").text) - 24:
+  while not curr:
+    curr = driver.find_element(By.CSS_SELECTOR, ".page-length").text
+    max_page =  driver.find_element(By.CSS_SELECTOR, ".record-count").text
+  # time.sleep(20)
+  curr = int(curr) + 24
+  print('curr ',driver.find_element(By.CSS_SELECTOR, ".page-length").text)
+  print('max ', driver.find_element(By.CSS_SELECTOR, ".record-count").text)
   driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
 i = 1
 while len(driver.find_elements(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name")) > 0:
+  print(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name").text)
   centers.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-name").text)
   emails.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .col-6 > div").text)
   programs.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-description").text)
   locations.append(driver.find_element(By.CSS_SELECTOR, f".col-lg-6:nth-child({i}) .child-care-facility-address").text)
+  i +=1 
+  
 
 
 
 pd.DataFrame({"Centers":centers, "Locations":locations, "emails":emails, 
-              "programs":programs}).to_csv('results.csv')
+              "programs":programs}).to_csv('manitoba.csv')
 
 
 # # Test name: manitoba
